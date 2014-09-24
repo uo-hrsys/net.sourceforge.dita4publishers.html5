@@ -4,24 +4,24 @@
   xmlns:htmlutil="http://dita4publishers.org/functions/htmlutil" xmlns:xd="http://www.oxygenxml.com/ns/doc/xsl"
   exclude-result-prefixes="df xs relpath htmlutil xd" version="2.0">
   <!-- =============================================================
-    
+
     DITA Map to HTML Transformation: Content Generation Module
-    
+
     Copyright (c) 2010 DITA For Publishers
-    
+
     This module generates output HTML files for each topic referenced
     from the incoming map.
-    
+
     Because all the HTML files are output to a single directory, this
     process generates unique (and opaque) filenames for the result
     HTML files. [It would be possible, given more effort, to generate
     distinct names that reflected the original filenames but it doesn't
     appear to be worth the effort.]
-    
+
     The output generation template logs messages that show the
     source-to-result mapping to make it easier to debug issues
     with the generated topics.
-    
+
     =============================================================  -->
 
   <xsl:template match="*[df:class(., 'map/map')]" mode="generate-content">
@@ -87,7 +87,7 @@
   </xsl:template>
 
   <!--xsl:template match="*" mode="generate-content" priority="-1">
-    <xsl:message> + [DEBUG] In catchall for generate-content, got 
+    <xsl:message> + [DEBUG] In catchall for generate-content, got
       <xsl:sequence select="."/></xsl:message>
   </xsl:template-->
 
@@ -111,7 +111,7 @@
     <!--xsl:variable name="parentPath" select="relpath:getParent($baseUri)" as="xs:string"/-->
     <xsl:variable name="relativePath" select="concat(relpath:getRelativePath($parentDocUri, $parentPath), '')"
       as="xs:string"/>
-      
+
     <xsl:variable name="topic-title">
       <xsl:apply-templates select="." mode="nav-point-title"/>
     </xsl:variable>
@@ -143,11 +143,13 @@
 
     <xsl:variable name="topic-content">
       <xsl:apply-templates mode="child.topic" select=".">
+        <xsl:with-param name="relativePath" select="$relativePath" as="xs:string" tunnel="yes"/>
       </xsl:apply-templates>
     </xsl:variable>
 
+
     <xsl:result-document format="html5" href="{$resultUri}">
-     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>  
+     <xsl:text disable-output-escaping="yes">&lt;!DOCTYPE html&gt;</xsl:text>
       <xsl:apply-templates mode="generate-html5-page" select=".">
         <xsl:with-param name="relativePath" select="$relativePath" as="xs:string" tunnel="yes"/>
         <xsl:with-param name="content" select="$topic-content" tunnel="yes"/>
@@ -198,7 +200,7 @@
     <xsl:for-each select="$topic">
       <!-- Process the topic in the default mode, meaning the base Toolkit-provided
         HTML output processing.
-        
+
         By providing the topicref as a tunneled parameter it makes it available
         to custom extensions to the base Toolkit processing.
       -->
