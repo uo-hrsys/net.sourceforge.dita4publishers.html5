@@ -33,31 +33,31 @@
 -->
   <xsl:output indent="yes" name="javascript" method="text"/>
 
- <!-- choose navigation markup type 
+ <!-- choose navigation markup type
         will be used later to offer alternate markup for navigation
    -->
 
    <xsl:template match="*" mode="choose-html5-nav-markup">
     <xsl:message> + [INFO] Generating HTML5 <xsl:value-of select="$NAVIGATIONMARKUP" />navigation ...</xsl:message>
    <xsl:choose>
-        <!-- 
+        <!--
         	Experimental
         -->
           <xsl:when test="$NAVIGATIONMARKUP='navigation-tabbed'">
           	<xsl:message> + [WARNING] This code is experimental !</xsl:message>
             <xsl:apply-templates select="." mode="generate-html5-nav-tabbed-markup"/>
           </xsl:when>
-          
+
           <xsl:when test="$NAVIGATIONMARKUP='navigation-ico'">
           	<xsl:message> + [WARNING] This code is experimental !</xsl:message>
             <xsl:apply-templates select="." mode="generate-html5-nav-ico-markup"/>
           </xsl:when>
-          
+
            <xsl:when test="$NAVIGATIONMARKUP='navigation-whole-page'">
           	<xsl:message> + [WARNING] This code is experimental !</xsl:message>
             <xsl:apply-templates select="." mode="generate-html5-nav-whole-page"/>
           </xsl:when>
-          
+
           <xsl:otherwise>
             <!-- This mode generates the navigation structure (ToC) on the
                 index.html page, that is, the main navigation structure.
@@ -66,7 +66,7 @@
           </xsl:otherwise>
         </xsl:choose>
   </xsl:template>
-  
+
   <xsl:template match="*[df:class(., 'map/map')]" mode="generate-html5-nav">
     <xsl:param name="collected-data" as="element()" tunnel="yes"/>
 
@@ -88,7 +88,7 @@
         	<xsl:apply-templates select="*[df:class(., 'topic/title')]" mode="generate-html5-nav-page-markup"/>
         	<xsl:sequence select="'&#x0a;'"/>
         </div>
-        
+
         <xsl:variable name="listItems" as="node()*">
           <xsl:apply-templates mode="generate-html5-nav"
             select=".
@@ -99,13 +99,13 @@
             )"
           />
         </xsl:variable>
-        
+
         <xsl:if test="$listItems">
-          <ul>
+          <ul class="{@outputclass}">
             <xsl:sequence select="$listItems"/>
           </ul>
         </xsl:if>
-        
+
         </div>
       </nav>
 
@@ -130,11 +130,11 @@
           <xsl:message> + [WARNING] generate-html5-nav: Failed to resolve topic reference to href "<xsl:sequence select="string(@href)"/>"</xsl:message>
         </xsl:when>
         <xsl:otherwise>
-          <xsl:variable name="targetUri" 
-            select="htmlutil:getTopicResultUrl($outdir, root($topic), $rootMapDocUrl)" 
+          <xsl:variable name="targetUri"
+            select="htmlutil:getTopicResultUrl($outdir, root($topic), $rootMapDocUrl)"
             as="xs:string"/>
-          <xsl:variable name="relativeUri" 
-            select="relpath:getRelativePath($outdir, $targetUri)" 
+          <xsl:variable name="relativeUri"
+            select="relpath:getRelativePath($outdir, $targetUri)"
             as="xs:string"/>
           <xsl:variable name="enumeration" as="xs:string?">
             <xsl:apply-templates select="." mode="enumeration"/>
@@ -163,7 +163,7 @@
               </xsl:apply-templates>
             </xsl:variable>
             <xsl:if test="$listItems">
-              <ul>
+              <ul class="{@outputclass}">
                 <xsl:sequence select="$listItems"/>
               </ul>
             </xsl:if>
@@ -215,7 +215,7 @@
     <xsl:if test="$tocDepth le $maxTocDepthInt">
       <xsl:variable name="navPointId" as="xs:string"
         select="generate-id(.)"/>
-      <li id="{$navPointId}">
+      <li id="{$navPointId}" class="{@outputclass}">
         <xsl:sequence select="df:getNavtitleForTopicref(.)"/>
         <xsl:variable name="listItems" as="node()*">
           <xsl:apply-templates select="*[df:class(., 'map/topicref')]" mode="#current">
@@ -275,20 +275,20 @@
   </xsl:template>
 
   <xsl:template match="text()" mode="generate-html5-nav"/>
-  
-  
+
+
     <!--
-  
+
   -->
-   
+
  	<xsl:template match="@*|node()" mode="fix-navigation-href">
 		<xsl:copy>
 			<xsl:apply-templates select="@*|node()" mode="fix-navigation-href"/>
 		</xsl:copy>
     </xsl:template>
-    
+
     <xsl:template match="@href" mode="fix-navigation-href">
-		
+
     	<xsl:param name="relativePath" as="xs:string" select="''" tunnel="yes" />
     	<xsl:variable name="prefix">
   	    	<xsl:choose>
@@ -301,12 +301,12 @@
   	    		<xsl:otherwise>
   	    			<xsl:value-of select="$relativePath" />
   	    		</xsl:otherwise>
-  	    	    	
+
   	    	</xsl:choose>
   	    	</xsl:variable>
-    		
-    
-		
+
+
+
 		<xsl:attribute name="href" select="concat($prefix, .)"/>
     </xsl:template>
 
